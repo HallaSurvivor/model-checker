@@ -4,7 +4,7 @@ import Structure
 import Dfa
 import Prelude hiding (succ)
 
-data SuccStates = Sink | Carry | NoCarry deriving (Eq)
+data SuccStates = Sink | Carry | NoCarry deriving (Eq, Show)
 
 succ :: DFA
 succ = mkDFA Carry delta (\s -> s /= Sink)
@@ -90,8 +90,8 @@ testProp4 =
 
 main :: IO ()
 main = 
-  putStrLn "solving..." >> 
-  print (eval testStructure testProp1) >>
-  print (eval testStructure testProp2) >>
-  print (eval testStructure testProp3) >>
-  print (eval testStructure testProp4) 
+  putStrLn "solving..." 
+  -- >> print (eval testStructure testProp1) 
+  >> print (eval testStructure testProp2) 
+  -- >> print (eval testStructure testProp3) 
+  -- >> print (eval testStructure testProp4)

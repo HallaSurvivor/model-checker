@@ -9,7 +9,6 @@ module Dfa
   ,complement
   ,eliminate
   ,extend
-  ,runDFA
   ) where
 
 import Prelude hiding (init)
@@ -25,9 +24,12 @@ data DFAint s = DFAint { transition :: [Bit] -> s -> s
 
 -- | Checks if a DFA accepts at least one word (requires the DFA be of arity 0)
 nonEmpty' :: (Eq s) => DFAint s -> Bool
-nonEmpty' d = dfs (init d) (const False)
+nonEmpty' d = dfs q0 (const False)
   where
-    dfs q seen = not (seen q) && (final d q || dfs q' (\x -> x == q || seen x))
+    q0 = transition d [] (init d) -- We don't care about the empty word
+
+    dfs q seen = if seen q then False else 
+                 if final d q then True else dfs q' (\x -> x == q || seen x)
       where
         q' = transition d [] q
 
@@ -66,10 +68,9 @@ eliminate' d = DFAint delta q0 f
         bs0 = Z:bs
         bs1 = O:bs
 
-
 -- Exposed!
 
-data DFA = forall s . Eq s => DFA (DFAint s)
+data DFA = forall s . (Eq s) => DFA (DFAint s)
 
 mkDFA :: (Eq s) => s -> ([Bit] -> s -> s) -> (s -> Bool) -> DFA
 mkDFA q0 delta f = DFA $ DFAint delta q0 f
@@ -96,10 +97,3 @@ extend (DFA d) ns = DFA $ DFAint delta q0 f
     q0 = init d
     f  = final d
     delta bs q = transition d (map (bs !!) ns) q
-
--- Mainly for testing
-runDFA :: DFA -> [[Bit]] -> Bool
-runDFA (DFA d) = isFinal . transition'
-  where
-    isFinal = final d
-    transition' = foldl (flip (transition d)) (init d) . transpose
