@@ -1,6 +1,6 @@
 {-# LANGUAGE ExistentialQuantification #-}
 module Dfa 
-  (Bit
+  (Bit(..)
   ,DFA
   ,mkDFA
   ,nonEmpty
@@ -8,13 +8,16 @@ module Dfa
   ,union
   ,complement
   ,eliminate
+  ,extend
+  ,runDFA
   ) where
 
 import Prelude hiding (init)
+import Data.List (transpose)
 
 data Bit = Z | O
 
--- | arbirtary arity DFA over {0,1} with states coming from s
+-- | arbirtary arity DFA over {0,1} with states coming from s (internal representation)
 data DFAint s = DFAint { transition :: [Bit] -> s -> s
                        , init       :: s
                        , final      :: s -> Bool 
@@ -60,8 +63,8 @@ eliminate' d = DFAint delta q0 f
     f     = not . null . filter (final d) 
     delta bs qs = [transition d bs0 q | q <- qs] ++ [transition d bs1 q | q <- qs]
       where
-        bs0 = Z:tail bs
-        bs1 = O:tail bs
+        bs0 = Z:bs
+        bs1 = O:bs
 
 
 -- Exposed!
@@ -85,3 +88,18 @@ complement (DFA d) = DFA $ complement' d
 
 eliminate :: DFA -> DFA
 eliminate (DFA d) = DFA $ eliminate' d
+
+-- Extend a DFA to act on a larger tape by ignoring unspecified inputs
+extend :: DFA -> [Int] -> DFA
+extend (DFA d) ns = DFA $ DFAint delta q0 f
+  where
+    q0 = init d
+    f  = final d
+    delta bs q = transition d (map (bs !!) ns) q
+
+-- Mainly for testing
+runDFA :: DFA -> [[Bit]] -> Bool
+runDFA (DFA d) = isFinal . transition'
+  where
+    isFinal = final d
+    transition' = foldl (flip (transition d)) (init d) . transpose
