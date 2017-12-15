@@ -9,9 +9,11 @@ module Dfa
   ,complement
   ,eliminate
   ,extend
+  ,runDFA
   ) where
 
 import Prelude hiding (init)
+import Data.List (transpose)
 
 data Bit = Z | O
 
@@ -23,11 +25,9 @@ data DFAint s = DFAint { transition :: [Bit] -> s -> s
 
 -- | Checks if a DFA accepts at least one word (requires the DFA be of arity 0)
 nonEmpty' :: (Eq s) => DFAint s -> Bool
-nonEmpty' d = dfs q0 (const False)
+nonEmpty' d = dfs (init d) (const False)
   where
-    q0 = transition d [] (init d) -- We don't care about the empty word
-
-    dfs q seen = not (seen q) && (final d q || dfs q' (\x -> x == q || seen x))
+    dfs q seen = not (seen q') && (final d q' || dfs q' (\x -> x == q || seen x))
       where
         q' = transition d [] q
 
@@ -95,3 +95,10 @@ extend (DFA d) ns = DFA $ DFAint delta q0 f
     q0 = init d
     f  = final d
     delta bs q = transition d (map (bs !!) ns) q
+
+-- Mainly for testing purposes
+runDFA :: DFA -> [[Bit]] -> Bool
+runDFA (DFA d) = isFinal . transition'
+  where
+    isFinal = final d
+    transition' = foldl (flip (transition d)) (init d) . transpose

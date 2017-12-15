@@ -46,52 +46,23 @@ testProp1 =
       (
         ForAll -- x
         (
-          Atom [0,2] 's' &&& 
-          Atom [1,3] 's' &&&           
-          (Atom [2,3] 'e' ==> Atom [0,1] 'e')
+          (Atom [0,2] 's' &&& Atom [1,3] 's' &&& Atom [2,3] 'e') ==> Atom [0,1] 'e'
         )
       )
     )
   )
-
--- forall x . forall y . x = y
+--
+-- exists x . forall y . x = y
 testProp2 :: Predicate
-testProp2 =
-  ForAll
-  (
-    ForAll
-    (
-      Atom [0,1] 'e'
-    )
-  )
+testProp2 = Exists $ ForAll $ Atom [0,1] 'e'
 
-
--- exists x . forall y. x = y
+-- forall x . exists y . x = y
 testProp3 :: Predicate
-testProp3 =
-  ForAll
-  (
-    Exists
-    (
-      Atom [0,1] 'e'
-    )
-  )
-
--- forall x . exists y. x = y
-testProp4 :: Predicate
-testProp4 =
-  Exists
-  (
-    ForAll
-    (
-      Atom [0,1] 'e'
-    )
-  )
+testProp3 = ForAll $ Exists $ Atom [0,1] 'e'
 
 main :: IO ()
 main = 
   putStrLn "solving..." 
-  -- >> print (eval testStructure testProp1) 
+  >> print (eval testStructure testProp1) 
   >> print (eval testStructure testProp2) 
-  -- >> print (eval testStructure testProp3) 
-  -- >> print (eval testStructure testProp4)
+  >> print (eval testStructure testProp3) 
