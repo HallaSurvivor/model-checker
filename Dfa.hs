@@ -12,7 +12,6 @@ module Dfa
   ) where
 
 import Prelude hiding (init)
-import Data.List (transpose)
 
 data Bit = Z | O
 
@@ -28,8 +27,7 @@ nonEmpty' d = dfs q0 (const False)
   where
     q0 = transition d [] (init d) -- We don't care about the empty word
 
-    dfs q seen = if seen q then False else 
-                 if final d q then True else dfs q' (\x -> x == q || seen x)
+    dfs q seen = not (seen q) && (final d q || dfs q' (\x -> x == q || seen x))
       where
         q' = transition d [] q
 
