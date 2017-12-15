@@ -51,14 +51,14 @@ testProp1 =
       )
     )
   )
---
--- exists x . forall y . x = y
-testProp2 :: Predicate
-testProp2 = Exists $ ForAll $ Atom [0,1] 'e'
 
 -- forall x . exists y . x = y
+testProp2 :: Predicate
+testProp2 = ForAll $ Exists $ Atom [0,1] 'e'
+
+-- exists x . forall y . x = y
 testProp3 :: Predicate
-testProp3 = ForAll $ Exists $ Atom [0,1] 'e'
+testProp3 = Exists $ ForAll $ Atom [0,1] 'e'
 
 main :: IO ()
 main = 

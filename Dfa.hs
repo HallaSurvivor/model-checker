@@ -27,7 +27,7 @@ data DFAint s = DFAint { transition :: [Bit] -> s -> s
 nonEmpty' :: (Eq s) => DFAint s -> Bool
 nonEmpty' d = dfs (init d) (const False)
   where
-    dfs q seen = not (seen q') && (final d q' || dfs q' (\x -> x == q || seen x))
+    dfs q seen = not (seen q') && (final d q' || dfs q' (\x -> x == q' || seen x))
       where
         q' = transition d [] q
 
