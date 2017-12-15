@@ -1,0 +1,9 @@
+Apparently this is semidecidable, and I have no idea why :(
+
+My guess is a bug in my DFS code, since checking the propositions
+by hand using the included runDFA seems to work correctly. But I have
+no idea where the bug in my DFS could be.
+
+But, it's already a day late, so here's what I have ^_^ 
+The fact that it can answer somewhat nontrivial true things 
+is still pretty cool
