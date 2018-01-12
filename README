@@ -1,3 +1,9 @@
+As a final project for Computational Discrete Mathematics at CMU,
+I wrote this model checker. If I feel inspired, one day I'll make it
+decidable instead of semidecidable. Currently it returns true or loops
+infinitely. The original readme is attached below.
+-----------------------------------------------------------------------------
+
 Apparently this is semidecidable, and I have no idea why :(
 
 My guess is a bug in my DFS code, since checking the propositions
